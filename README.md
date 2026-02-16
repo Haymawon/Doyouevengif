@@ -44,37 +44,6 @@ Built with **Vue 3**, **TypeScript**, **Tailwind CSS** (frontend) and **Flask**,
 - [Jikan API](https://jikan.moe/) – unofficial MyAnimeList API (anime data)
 - [AniList API](https://anilist.gitbook.io/) – GraphQL API (manga data)
 
----
-
-## 📁 Project Structure
-doyouevengif/
-├── backend/ # Flask backend
-│ ├── app.py # main application
-│ ├── models.py # SQLAlchemy models
-│ └── requirements.txt # Python dependencies
-├── public/ # static assets
-├── src/
-│ ├── assets/ # images, fonts
-│ ├── components/ # reusable Vue components
-│ ├── composables/ # reusable composition functions
-│ ├── pages/ # route-level components
-│ ├── router/ # Vue Router configuration
-│ ├── services/ # API client (backend calls)
-│ ├── stores/ # Pinia stores (auth, theme)
-│ ├── styles/ # Tailwind CSS + custom styles
-│ ├── types/ # TypeScript interfaces
-│ ├── App.vue # root component
-│ └── main.ts # entry point
-├── .env # environment variables
-├── index.html # main HTML file
-├── package.json # frontend dependencies
-├── tailwind.config.js # Tailwind configuration
-├── tsconfig.json # TypeScript config
-├── vite.config.ts # Vite config
-└── README.md # you are here
-
----
-
 ## Getting Started
 
 ### Prerequisites
