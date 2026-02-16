@@ -37,8 +37,10 @@ app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=1)
 CORS(
     app,
     supports_credentials=True,
-    origins=["http://localhost:5173"]   # Vite default dev port
-    # Add your production domain later, e.g. "https://your-frontend.netlify.app"
+    origins=[
+        "http://localhost:5173",          # Local Vite dev server
+        "https://doyouevengif.onrender.com"  
+    ]
 )
 
 # ---------- INIT EXTENSIONS ----------
