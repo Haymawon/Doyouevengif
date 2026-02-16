@@ -11,48 +11,58 @@ import requests
 import logging
 from models import db, User, SearchHistory
 
-# Load .env file from the same directory as this file
+# ---------- CONFIGURATION ----------
+# Load environment variables from .env (must exist)
 env_path = Path(__file__).parent / '.env'
 load_dotenv(dotenv_path=env_path)
 
-# Optional: print to verify (remove in production)
-print("JWT_SECRET from env:", os.getenv('JWT_SECRET'))
-
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+
+# Database – absolute path avoids confusion
+BASE_DIR = Path(__file__).parent
+app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{BASE_DIR / 'users.db'}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Flask secret key (used for sessions, fallback for JWT)
+# Flask secret key (used for sessions, optional)
 app.config['SECRET_KEY'] = os.getenv('FLASK_SECRET', 'dev-secret-key-change-in-production')
 
-# JWT secret key – use JWT_SECRET from env, fallback to Flask SECRET_KEY
-app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET', app.config['SECRET_KEY'])
+# JWT secret – MUST be set in .env, no fallback!
+JWT_SECRET = os.getenv('JWT_SECRET')
+if not JWT_SECRET:
+    raise RuntimeError("JWT_SECRET environment variable is missing. Set it in .env")
+app.config['JWT_SECRET_KEY'] = JWT_SECRET
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=1)
 
-# Verify it's set (partial print for security)
-print("JWT_SECRET_KEY set to:", app.config['JWT_SECRET_KEY'][:5] + '...')
+# CORS – adjust origins for production
+CORS(
+    app,
+    supports_credentials=True,
+    origins=["http://localhost:5173"]   # Vite default dev port
+    # Add your production domain later, e.g. "https://your-frontend.netlify.app"
+)
 
+# ---------- INIT EXTENSIONS ----------
 db.init_app(app)
 jwt = JWTManager(app)
-CORS(app, supports_credentials=True)
 
-# Set up logging
 logging.basicConfig(level=logging.DEBUG)
 
-# Create tables
 with app.app_context():
     db.create_all()
 
-# Helper: call external APIs
+# ---------- EXTERNAL API HELPERS ----------
 JIKAN_BASE = 'https://api.jikan.moe/v4'
 ANILIST_ENDPOINT = 'https://graphql.anilist.co'
 
 def search_anime_jikan(query):
     url = f"{JIKAN_BASE}/anime?q={query}&sfw"
-    resp = requests.get(url)
-    if resp.status_code != 200:
+    try:
+        resp = requests.get(url, timeout=5)
+        if resp.status_code != 200:
+            return None
+        return resp.json().get('data', [])
+    except requests.RequestException:
         return None
-    return resp.json().get('data', [])
 
 def search_manga_anilist(query):
     gql = """
@@ -72,17 +82,23 @@ def search_manga_anilist(query):
         }
     }
     """
-    resp = requests.post(ANILIST_ENDPOINT, json={'query': gql, 'variables': {'search': query}})
-    if resp.status_code != 200:
+    try:
+        resp = requests.post(ANILIST_ENDPOINT, json={'query': gql, 'variables': {'search': query}}, timeout=5)
+        if resp.status_code != 200:
+            return None
+        return resp.json().get('data', {}).get('Page', {}).get('media', [])
+    except requests.RequestException:
         return None
-    return resp.json().get('data', {}).get('Page', {}).get('media', [])
 
 def get_anime_by_id(id):
     url = f"{JIKAN_BASE}/anime/{id}"
-    resp = requests.get(url)
-    if resp.status_code != 200:
+    try:
+        resp = requests.get(url, timeout=5)
+        if resp.status_code != 200:
+            return None
+        return resp.json().get('data')
+    except requests.RequestException:
         return None
-    return resp.json().get('data')
 
 def get_manga_by_id(id):
     gql = """
@@ -100,12 +116,15 @@ def get_manga_by_id(id):
         }
     }
     """
-    resp = requests.post(ANILIST_ENDPOINT, json={'query': gql, 'variables': {'id': id}})
-    if resp.status_code != 200:
+    try:
+        resp = requests.post(ANILIST_ENDPOINT, json={'query': gql, 'variables': {'id': id}}, timeout=5)
+        if resp.status_code != 200:
+            return None
+        return resp.json().get('data', {}).get('Media')
+    except requests.RequestException:
         return None
-    return resp.json().get('data', {}).get('Media')
 
-# ========== AUTH ROUTES ==========
+# ---------- AUTH ROUTES ----------
 @app.route('/api/register', methods=['POST'])
 def register():
     data = request.json
@@ -182,7 +201,7 @@ def update_profile():
     db.session.commit()
     return jsonify(user.to_dict())
 
-# ========== SEARCH ROUTES ==========
+# ---------- SEARCH ROUTES ----------
 @app.route('/api/search/anime', methods=['GET'])
 @jwt_required()
 def search_anime():
@@ -233,7 +252,7 @@ def get_manga_detail(id):
         return jsonify({'error': 'Not found'}), 404
     return jsonify(data)
 
-# ========== HOME ==========
+# ---------- HOME ----------
 @app.route('/api/home', methods=['GET'])
 @jwt_required()
 def home():
@@ -249,22 +268,25 @@ def home():
             recommendations.extend(results[:3])
 
     if not recommendations:
-        trending = requests.get(f"{JIKAN_BASE}/top/anime").json().get('data', [])[:10]
+        trending = requests.get(f"{JIKAN_BASE}/top/anime", timeout=5).json().get('data', [])[:10]
         recommendations = trending
 
     return jsonify({'recommendations': recommendations[:20]})
 
-# ========== RECOMMENDATIONS ==========
+# ---------- RECOMMENDATIONS ----------
 @app.route('/api/recommendations/anime/<int:id>', methods=['GET'])
 @jwt_required()
 def rec_anime(id):
     url = f"{JIKAN_BASE}/anime/{id}/recommendations"
-    resp = requests.get(url)
-    if resp.status_code != 200:
+    try:
+        resp = requests.get(url, timeout=5)
+        if resp.status_code != 200:
+            return jsonify([])
+        data = resp.json().get('data', [])
+        recs = [item['entry'] for item in data[:6]]
+        return jsonify(recs)
+    except requests.RequestException:
         return jsonify([])
-    data = resp.json().get('data', [])
-    recs = [item['entry'] for item in data[:6]]
-    return jsonify(recs)
 
 @app.route('/api/recommendations/manga/<int:id>', methods=['GET'])
 @jwt_required()
