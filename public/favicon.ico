@@ -1,0 +1,11 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Left weight (anime eye) -->
+  <circle cx="7" cy="16" r="7" fill="#2C3E50"/>
+  <circle cx="7" cy="16" r="5" fill="white"/>
+  <circle cx="7" cy="16" r="2.5" fill="#2C3E50"/>
+  <circle cx="7" cy="14" r="1" fill="white"/>
+  <!-- Bar -->
+  <rect x="14" y="14" width="4" height="4" rx="1" fill="#2C3E50"/>
+  <!-- Right weight -->
+  <circle cx="25" cy="16" r="7" fill="#2C3E50"/>
+</svg>
