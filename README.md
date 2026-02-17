@@ -53,8 +53,8 @@ Built with **Vue 3**, **TypeScript**, **Tailwind CSS** (frontend) and **Flask**,
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/doyouevengif.git
-cd doyouevengif
+git clone https://github.com/Haymawon/Doyouevengif.git
+cd Doyouevengif
 ```
 ### 2. Backend setup
 ```bash
