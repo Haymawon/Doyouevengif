@@ -5,4 +5,5 @@ flask-cors
 bcrypt
 requests
 python-dotenv
+flask-mail
 gunicorn
