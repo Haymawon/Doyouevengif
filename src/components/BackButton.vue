@@ -27,8 +27,9 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 const isHovered = ref(false)
 
+// Use router.back() only, let scrollBehavior handle position
 const goBack = () => {
-  if (window.history.state.back) {
+  if (window.history.length > 1) {
     router.back()
   } else {
     router.push('/')
