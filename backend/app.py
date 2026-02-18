@@ -298,11 +298,31 @@ def forgot_password():
     frontend_url = os.getenv('FRONTEND_URL', 'http://localhost:5173')
     reset_link = f"{frontend_url}/reset-password?token={token_obj.token}"
 
+    # email content
+    html_body = f"""
+    <p>Hi {user.name},</p>
+    <p>We received a request to reset your password for your doyouevengif account.</p>
+    <p>Click the button below to set a new password:</p>
+    <p>
+        <a href="{reset_link}" style="display: inline-block; padding: 12px 24px; background-color: #8a42ff; color: white; text-decoration: none; border-radius: 6px; font-weight: bold;">
+            Reset Password
+        </a>
+    </p>
+    <p>Or copy and paste this link into your browser:<br>
+    <a href="{reset_link}">{reset_link}</a></p>
+    <p>This link will expire in <strong>1 hour</strong> for your security.</p>
+    <p>If you didn't request this password reset, you can safely ignore this email – your password will remain unchanged.</p>
+    <p>For your protection, never share this link with anyone.</p>
+    <p>– The doyouevengif team</p>
+    """
+
     msg = Message(
         subject="Reset your doyouevengif password",
         recipients=[user.email],
-        body=f"Hello {user.name},\n\nReset link: {reset_link}\n\nThis expires in 1 hour.\n\n– doyouevengif team"
+        body=f"Hi {user.name},\n\nWe received a request to reset your password for your doyouevengif account.\n\nClick the link below to set a new password:\n{reset_link}\n\nThis link will expire in 1 hour for your security.\n\nIf you didn't request this password reset, you can safely ignore this email.\n\n– The doyouevengif team",
+        html=html_body
     )
+
     threading.Thread(target=send_async_email, args=(app, msg)).start()
 
     return jsonify({'message': 'If that email exists, a reset link has been sent.'}), 200
@@ -327,6 +347,7 @@ def reset_password():
     reset.used = True
     db.session.commit()
     return jsonify({'message': 'Password updated'}), 200
+
 @app.route('/api/test-email', methods=['GET'])
 def test_email():
     msg = Message(
