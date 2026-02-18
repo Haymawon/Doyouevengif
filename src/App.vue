@@ -62,10 +62,13 @@
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-8">
       <router-view />
     </main>
+
+    <Footer />
   </div>
 </template>
 
 <script setup lang="ts">
+import Footer from './components/Footer.vue'
 import { ref } from 'vue'
 import { useAuthStore } from './stores/auth'
 import { useThemeStore } from './stores/theme'
