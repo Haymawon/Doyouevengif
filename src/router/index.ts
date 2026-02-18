@@ -38,7 +38,7 @@ const routes = [
 export const router = createRouter({
   history: createWebHistory(),
   routes,
-  scrollBehavior(to, from, savedPosition) {
+  scrollBehavior(_to, _from, savedPosition) {
     if (savedPosition) {
       return savedPosition
     } else {
@@ -55,3 +55,4 @@ router.beforeEach((to, _from, next) => {
     next()
   }
 })
+// 'from' is unused, so we use _from to avoid TS/ESLint unused var warning
