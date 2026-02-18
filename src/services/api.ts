@@ -5,20 +5,39 @@ const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
 
 async function fetchWithAuth(endpoint: string, options: RequestInit = {}) {
   const auth = useAuthStore()
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), 10000) // 10 second timeout
+
   const headers = new Headers(options.headers || {})
   if (auth.token) {
     headers.set('Authorization', `Bearer ${auth.token}`)
   }
   headers.set('Content-Type', 'application/json')
-  const res = await fetch(`${API_BASE}${endpoint}`, { ...options, headers })
-  if (!res.ok) {
-    const error = await res.json().catch(() => ({}))
-    throw new Error(error.error || 'Request failed')
+
+  try {
+    const res = await fetch(`${API_BASE}${endpoint}`, {
+      ...options,
+      signal: controller.signal,
+      headers
+    })
+    clearTimeout(timeoutId)
+
+    if (!res.ok) {
+      const error = await res.json().catch(() => ({}))
+      throw new Error(error.error || 'Request failed')
+    }
+    return res.json()
+  } catch (err: any) {
+    clearTimeout(timeoutId)
+    if (err.name === 'AbortError') {
+      throw new Error('Request timeout – please try again')
+    }
+    throw err
   }
-  return res.json()
 }
 
 export const api = {
+  // Auth
   register(data: { name: string; username: string; email: string; password: string; terms: boolean }) {
     return fetchWithAuth('/register', { method: 'POST', body: JSON.stringify(data) })
   },
@@ -32,6 +51,21 @@ export const api = {
     return fetchWithAuth('/profile', { method: 'PUT', body: JSON.stringify(data) })
   },
 
+  // Password reset
+  forgotPassword(email: string) {
+    return fetchWithAuth('/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify({ email })
+    })
+  },
+  resetPassword(token: string, password: string) {
+    return fetchWithAuth('/reset-password', {
+      method: 'POST',
+      body: JSON.stringify({ token, password })
+    })
+  },
+
+  // Search
   searchAnime(query: string): Promise<JikanAnime[]> {
     return fetchWithAuth(`/search/anime?q=${encodeURIComponent(query)}`)
   },
@@ -39,6 +73,7 @@ export const api = {
     return fetchWithAuth(`/search/manga?q=${encodeURIComponent(query)}`)
   },
 
+  // Details
   getAnimeById(id: number): Promise<JikanAnime> {
     return fetchWithAuth(`/anime/${id}`)
   },
@@ -46,6 +81,7 @@ export const api = {
     return fetchWithAuth(`/manga/${id}`)
   },
 
+  // Recommendations
   async getAnimeRecommendations(id: number): Promise<JikanAnime[]> {
     try {
       return await fetchWithAuth(`/recommendations/anime/${id}`)
@@ -61,6 +97,7 @@ export const api = {
     }
   },
 
+  // Home
   getHomeRecommendations(): Promise<{ recommendations: JikanAnime[] }> {
     return fetchWithAuth('/home')
   },
