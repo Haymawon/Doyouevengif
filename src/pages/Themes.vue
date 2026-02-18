@@ -37,5 +37,4 @@ const themes: ThemeOption[] = [
   { id: 'light-pink', name: 'Light Pink', description: 'Soft and cute', preview: '#ff8fc7' },
   { id: 'dark-blue', name: 'Dark Blue', description: 'Deep ocean vibes', preview: '#0a1929' },
 ]
-
 </script>
