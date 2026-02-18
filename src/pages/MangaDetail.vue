@@ -41,8 +41,6 @@
             <div class="glass-card bg-secondary/30 p-4 border-0">
               <p class="text-foreground leading-relaxed" v-html="manga.description || 'No description available.'"></p>
             </div>
-
-            <!-- Additional manga-specific fields can be added here -->
           </div>
         </div>
       </div>
@@ -58,7 +56,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { api } from '@/services/api'
 import type { AniListManga } from '@/types/anime'
@@ -83,10 +81,12 @@ async function fetchData() {
     recommendations.value = recs.slice(0, 20)
   } catch (err) {
     error.value = err instanceof Error ? err.message : 'Failed to load'
+    recommendations.value = []
   } finally {
     loading.value = false
   }
 }
 
 onMounted(fetchData)
+watch(() => route.params.id, fetchData)
 </script>
