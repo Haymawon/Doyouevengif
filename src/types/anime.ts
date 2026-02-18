@@ -1,4 +1,4 @@
-﻿export interface JikanAnime {
+export interface JikanAnime {
   mal_id: number;
   title: string;
   images: {
