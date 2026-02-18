@@ -298,7 +298,9 @@ def forgot_password():
 
     frontend_url = os.getenv('FRONTEND_URL', 'http://localhost:5173')
     reset_link = f"{frontend_url}/reset-password?token={token_obj.token}"
-
+@app.route('/test')
+def test():
+    return "Hello from Flask!"
     # email content
     html_body = f"""
     <p>Hi {user.name},</p>
@@ -364,4 +366,5 @@ def test_email():
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
+
 
