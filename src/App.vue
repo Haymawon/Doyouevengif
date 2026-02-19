@@ -13,7 +13,6 @@
           <router-link to="/" class="nav-link">Home</router-link>
           <router-link to="/anime" class="nav-link">Anime</router-link>
           <router-link to="/manga" class="nav-link">Manga</router-link>
-          <router-link to="/about" class="nav-link">About</router-link>
           <router-link to="/themes" class="nav-link">Themes</router-link>
         </nav>
 
