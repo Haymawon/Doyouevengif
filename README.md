@@ -1,6 +1,6 @@
 # DoYouEvenGif
 
-**DoYouEvenGif** is a full‑stack web application for discovering anime and manga.  
+**[DoYouEvenGif](https://doyouevengif.online)** is a full‑stack web application for discovering anime and manga.  
 It combines data from **Jikan (MyAnimeList)** and **AniList GraphQL** with a custom user system, search history, personalized recommendations, and three built‑in themes.
 
 Built with **Vue 3**, **TypeScript**, **Tailwind CSS** (frontend) and **Flask**, **SQLite**, **JWT** (backend).  
