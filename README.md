@@ -152,7 +152,7 @@ npm run build
 - **Please keep code clean, type‑safe, and well‑commented.**
 
 ### License
-**This project is licensed under the MIT License – see the [LICENSE](https://github.com/Haymawon/Doyouevengif/blob/main/LICENSE) file for details.**
+**This project is licensed under the GPL3.0 License – see the [LICENSE](https://github.com/Haymawon/Doyouevengif/blob/main/LICENSE) file for details.**
 
 ### Acknowledgements
 - **[Jikan API](https://jikan.moe/) for providing easy access to MyAnimeList data.**
