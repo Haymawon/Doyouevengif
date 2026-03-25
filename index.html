@@ -1,13 +1,206 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DoYouEvenGif</title>
-  </head>
-  <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Echoes · Devoted to letting go</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* ---- minimalist foundation: only the essential card + text ---- */
+    body {
+      background: #0b0a0f;   /* deep neutral background, no extra images */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      font-family: system-ui, 'Segoe UI', 'Roboto', 'Inter', 'Helvetica Neue', sans-serif;
+      padding: 1.5rem;
+    }
+
+    /* 
+      MAIN CONTAINER 
+      - exactly respects the given image dimensions: 735px width × 474px height
+      - uses background-image (ONE SINGLE BACKGROUND IMAGE)
+      - fully responsive but preserves original aspect ratio
+      - placeholder image URL is clearly marked for replacement
+    */
+    .memory-card {
+      position: relative;
+      max-width: 735px;          /* default image width */
+      width: 100%;
+      aspect-ratio: 735 / 474;   /* forces perfect ratio 735:474 */
+      
+      /* ----- BACKGROUND IMAGE (placeholder) ----- */
+      /* 🔁 REPLACE THE URL BELOW WITH YOUR REAL IMAGE PATH 🔁 
+         Example: url('images/your-background.jpg') or absolute path */
+      background-image: url('https://picsum.photos/id/105/735/474');   /* placeholder (soft mountain lake) — 735x474 exact size */
+      background-size: cover;      /* fills container without distortion (ratio matches perfectly) */
+      background-position: center 30%;
+      background-repeat: no-repeat;
+      
+      border-radius: 2rem;
+      box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.05);
+      transition: transform 0.25s ease, box-shadow 0.3s ease;
+      overflow: hidden;
+    }
+
+    /* very subtle interactive lift – keeps focus on image+text, no extra media */
+    .memory-card:hover {
+      transform: scale(1.01);
+      box-shadow: 0 30px 50px -18px black;
+    }
+
+    /* 
+      semi-transparent atmospheric overlay (pure CSS, no extra image)
+      enhances text readability while keeping background image fully visible
+    */
+    .memory-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0.5) 100%);
+      z-index: 1;
+      pointer-events: none;      /* text remains fully clickable/selectable */
+      backdrop-filter: brightness(0.95) blur(0.5px);
+    }
+
+    /* text wrapper — sits above background & overlay */
+    .verse-container {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      padding: 1.5rem;
+    }
+
+    /* lyrical text block — clean, readable, emotional presence */
+    .lyrics {
+      background: rgba(10, 8, 18, 0.75);
+      backdrop-filter: blur(12px);
+      border-radius: 2rem;
+      padding: 1.4rem 2rem;
+      text-align: center;
+      max-width: 90%;
+      border: 1px solid rgba(255, 245, 220, 0.25);
+      box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.4);
+      transition: all 0.2s;
+    }
+
+    /* each line treated as poetic verse */
+    .verse-line {
+      display: block;
+      font-weight: 500;
+      font-size: 1.55rem;
+      letter-spacing: -0.01em;
+      line-height: 1.45;
+      color: #fff5ea;
+      text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+      margin: 0.4rem 0;
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', monospace;
+    }
+
+    /* delicate separation: each line breathes */
+    .verse-line:first-child {
+      margin-top: 0;
+    }
+    .verse-line:last-child {
+      margin-bottom: 0;
+    }
+
+    /* subtle italic for the last line to give emotional weight (devoted) */
+    .verse-line:last-child {
+      font-style: italic;
+      font-weight: 540;
+      letter-spacing: 0.2px;
+      color: #ffefd6;
+    }
+
+    /* ---- responsive typography: adapts to smaller screens but stays elegant ---- */
+    @media (max-width: 700px) {
+      .lyrics {
+        padding: 1.2rem 1.5rem;
+      }
+      .verse-line {
+        font-size: 1.3rem;
+        line-height: 1.4;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .verse-line {
+        font-size: 1.12rem;
+      }
+      .lyrics {
+        padding: 1rem 1.2rem;
+        border-radius: 1.6rem;
+      }
+      .memory-card {
+        border-radius: 1.4rem;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .verse-line {
+        font-size: 1rem;
+      }
+      .lyrics {
+        padding: 0.9rem 1rem;
+      }
+    }
+
+    /* ensure text remains perfectly readable even with thin screens */
+    @media (max-width: 360px) {
+      .verse-line {
+        font-size: 0.9rem;
+        line-height: 1.35;
+      }
+    }
+
+    /* optional: very fine detail — no additional images, no icons */
+    .memory-card, .memory-card::before, .lyrics {
+      user-select: text;    /* text can be selected naturally */
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 
+    ONE BACKGROUND IMAGE + TEXT ONLY
+    - the image is applied as background to .memory-card
+    - no <img> tags, no extra decorative images
+    - text lines match the requested wording exactly
+  -->
+  <div class="memory-card">
+    <div class="verse-container">
+      <div class="lyrics">
+        <span class="verse-line">I guess I gotta go</span>
+        <span class="verse-line">I guess it's time to go</span>
+        <span class="verse-line">I gotta let you go</span>
+        <span class="verse-line">I'm so devoted</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 
+    ======================================================
+    PLACEHOLDER INSTRUCTION:
+    Current background image: 'https://picsum.photos/id/105/735/474' 
+    (exact 735x474 pixels, serves as placeholder)
+
+    ✅ REPLACE WITH YOUR OWN IMAGE:
+    In .memory-card rule, change background-image: url('YOUR_IMAGE_PATH');
+    Supported formats: jpg, png, webp. 
+    Recommended: use an image with dimensions 735x474 for perfect fit,
+    but any image will adapt due to background-size: cover (ratio preserved).
+    ======================================================
+  -->
+</body>
 </html>
