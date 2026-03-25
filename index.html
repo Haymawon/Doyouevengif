@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Full Frame · Letting Go</title>
   <style>
-    /* RESET & FULL SCREEN BASE */
+    
     * {
       margin: 0;
       padding: 0;
@@ -15,45 +15,38 @@
     html, body {
       width: 100%;
       height: 100%;
-      background: #000; /* deep fallback – visible on letterbox areas */
+      background: #000; 
     }
 
     body {
-      /* remove any default spacing */
       margin: 0;
       padding: 0;
       font-family: system-ui, 'Inter', -apple-system, 'Segoe UI', 'Helvetica Neue', sans-serif;
       
-      /* full-screen container using viewport units */
+      
       display: flex;
       align-items: center;
       justify-content: center;
       position: relative;
-      overflow: hidden; /* prevents scrollbars when background-size: contain leaves gaps */
+      overflow: hidden;
     }
 
-    /* 
-      FULLSCREEN BACKGROUND CONTAINER
-      - covers entire viewport (no padding/margins)
-      - uses background-size: contain → ENTIRE image visible, NO cropping
-      - centered with background-color black for unoccupied areas (letterbox/pillarbox)
-      - on rotate, the image scales perfectly to fit without cutting anything
-    */
+    
     .fullscreen-image {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background-image: url('93dbc2c52df623e4fd95b455601d50b8.jpg'); /* 🔁 REPLACE WITH YOUR REAL IMAGE PATH */
-      background-size: contain;      /* ensures full image visible – no cut */
+      background-image: url('93dbc2c52df623e4fd95b455601d50b8.jpg'); 
+      background-size: contain;      
       background-position: center;
       background-repeat: no-repeat;
-      background-color: #0a0a0a;    /* elegant dark border for unmatched aspect ratios */
+      background-color: #0a0a0a;    
       z-index: 1;
     }
 
-    /* TEXT LAYER – overlays directly on top of the image, NO BOX BACKGROUND */
+    
     .verse-overlay {
       position: relative;
       z-index: 2;
@@ -64,10 +57,10 @@
       justify-content: center;
       text-align: center;
       padding: 1.5rem;
-      /* no background, no backdrop-filter, no border – exactly "no text box" */
+      
     }
 
-    /* lyrical block – pure text without any container box */
+
     .lyrics-pure {
       display: flex;
       flex-direction: column;
@@ -75,7 +68,7 @@
       max-width: 90%;
     }
 
-    /* each line styled for clarity over any image */
+    
     .verse-line {
       display: block;
       font-weight: 560;
@@ -89,7 +82,7 @@
       word-break: keep-all;
     }
 
-    /* subtle distinction: last line emotional italics */
+    
     .verse-line:last-child {
       font-style: italic;
       font-weight: 550;
@@ -97,7 +90,7 @@
       text-shadow: 0 4px 14px rgba(0, 0, 0, 0.7);
     }
 
-    /* responsive: slightly smaller on very narrow devices but still elegant */
+    
     @media (max-width: 560px) {
       .verse-line {
         font-size: clamp(1.2rem, 6.5vw, 2rem);
@@ -117,7 +110,7 @@
       }
     }
 
-    /* optional: if someone uses a very tall display, text stays comfortable */
+    
     @media (max-height: 500px) and (orientation: landscape) {
       .verse-line {
         font-size: clamp(1rem, 5vh, 1.9rem);
@@ -127,22 +120,20 @@
       }
     }
 
-    /* ensure text is always selectable */
+    /
     .verse-line {
       user-select: text;
     }
-
-    /* remove any focus outlines that could appear, keep clean */
+    
     .fullscreen-image, .verse-overlay {
       outline: none;
     }
   </style>
 </head>
 <body>
-  <!-- Background image container: FULL SCREEN, NO CROP, stays whole -->
+  
   <div class="fullscreen-image"></div>
 
-  <!-- Text overlay: exactly the requested lyrics, no background box -->
   <div class="verse-overlay">
     <div class="lyrics-pure">
       <span class="verse-line">I guess I gotta go</span>
@@ -152,16 +143,5 @@
     </div>
   </div>
 
-  <!-- 
-    ============================================================
-    ✅ FULLSCREEN & NO CUT GUARANTEE:
-    - background-size: contain → entire image visible on any screen/rotation.
-    - On mobile/tablet: rotate device to see full image without any cropping.
-    - Dark background fills any leftover space elegantly (no ugly white gaps).
-    ✅ NO TEXT BOX: removed background, blur, border, padding, rounded corners from text container.
-    ✅ IMAGE PLACEHOLDER: currently set to '93dbc2c52df623e4fd95b455601d50b8.jpg'.
-       Replace that path with your actual image file (absolute or relative).
-    ============================================================
-  -->
 </body>
 </html>
