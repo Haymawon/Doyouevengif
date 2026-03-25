@@ -1,9 +1,0 @@
-flask
-flask-sqlalchemy
-flask-jwt-extended
-flask-cors
-bcrypt
-requests
-python-dotenv
-flask-mail
-gunicorn
