@@ -10,7 +10,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include <string.h>
 #include <float.h>
 
 /* ------------------------------------------------------------
@@ -59,18 +58,6 @@ static inline Vec3 point_at(Ray r, double t) {
     return add(r.orig, mul(r.dir, t));
 }
 
-typedef struct Hit {
-    int happened;
-    double t;
-    Vec3 pos;
-    Vec3 normal;
-} Hit;
-
-static Hit no_hit(void) {
-    Hit h = {0, DBL_MAX, {0,0,0}, {0,0,0}};
-    return h;
-}
-
 /* ------------------------------------------------------------
    M A T E R I A L
    ------------------------------------------------------------ */
@@ -94,6 +81,23 @@ static Material mat_mirror(Vec3 c, double ref) {
 static Material mat_shiny(Vec3 c, double sh) {
     Material m = {c, 0.0, sh};
     return m;
+}
+
+/* ------------------------------------------------------------
+   H I T   (carries material)
+   ------------------------------------------------------------ */
+
+typedef struct Hit {
+    int happened;
+    double t;
+    Vec3 pos;
+    Vec3 normal;
+    Material mat;
+} Hit;
+
+static Hit no_hit(void) {
+    Hit h = {0, DBL_MAX, {0,0,0}, {0,0,0}, {0,0,0}};
+    return h;
 }
 
 /* ------------------------------------------------------------
@@ -127,7 +131,7 @@ static Hit hit_sphere(Sphere *s, Ray r, double t_min, double t_max) {
     Vec3 pos = point_at(r, t);
     Vec3 normal = norm(sub(pos, s->center));
 
-    Hit h = {1, t, pos, normal};
+    Hit h = {1, t, pos, normal, s->mat};
     return h;
 }
 
@@ -145,7 +149,7 @@ static Hit hit_plane(Plane *p, Ray r, double t_min, double t_max) {
     if (t < t_min || t > t_max) return no_hit();
 
     Vec3 pos = point_at(r, t);
-    Hit h = {1, t, pos, p->normal};
+    Hit h = {1, t, pos, p->normal, p->mat};
     return h;
 }
 
@@ -197,13 +201,10 @@ static int in_shadow(Vec3 point, Vec3 light_pos, double t_max) {
     double dist = len(dir);
     Ray shadow_ray = ray(add(point, mul(norm(dir), 0.001)), dir);
 
-    // Check spheres
     for (int i = 0; i < g_scene.n_spheres; i++) {
         Hit h = hit_sphere(&g_scene.spheres[i], shadow_ray, 0.0, dist);
         if (h.happened) return 1;
     }
-    // Check planes (only if they block light, but here they are floors, so ignore or handle)
-    // We'll ignore planes for shadow, it's fine.
     return 0;
 }
 
@@ -232,7 +233,6 @@ static Hit scene_intersect(Ray r) {
         Hit h = hit_sphere(&g_scene.spheres[i], r, 0.001, t_max);
         if (h.happened && h.t < closest.t) {
             closest = h;
-            closest.normal = h.normal; // already normalized
             t_max = h.t;
         }
     }
@@ -259,21 +259,17 @@ static Vec3 background_color(Ray r) {
     return add(mul(white, 1.0-t), mul(blue, t));
 }
 
-static Vec3 shade(Hit hit, Ray ray, int depth) {
-    if (!hit.happened) return background_color(ray);
+static Vec3 shade(Hit hit, Ray incident_ray, int depth) {
+    if (!hit.happened) return background_color(incident_ray);
 
     Vec3 pos = hit.pos;
     Vec3 N = hit.normal;
-    Vec3 V = norm(mul(ray.dir, -1.0));
+    Vec3 V = norm(mul(incident_ray.dir, -1.0));
+    Material mat = hit.mat;
 
-    Material mat;
-    if (hit.t < 1e5) { // assume sphere if normal not aligned with Y? Nah.
-        // We'll cheat: if normal is (0,1,0) it's floor else sphere.
-        if (fabs(N.y - 1.0) < 0.1) {
-            mat = mat_matte(checker_color(pos));
-        } else {
-            mat = mat_mirror(v3(0.9, 0.6, 0.4), 0.8);
-        }
+    // Override floor color with checker
+    if (fabs(N.y - 1.0) < 0.1) {
+        mat.color = checker_color(pos);
     }
 
     Vec3 ambient = mul(mat.color, 0.1);
@@ -301,8 +297,8 @@ static Vec3 shade(Hit hit, Ray ray, int depth) {
 
     // Reflection
     if (depth < 3 && mat.reflect > 0.0) {
-        Vec3 reflect_dir = sub(ray.dir, mul(N, 2.0 * dot(ray.dir, N)));
-        Ray reflect_ray = ray(add(pos, mul(N, 0.001)), reflect_dir);
+        Vec3 reflect_dir = sub(incident_ray.dir, mul(N, 2.0 * dot(incident_ray.dir, N)));
+        Ray reflect_ray = { add(pos, mul(N, 0.001)), norm(reflect_dir) };
         Hit reflect_hit = scene_intersect(reflect_ray);
         Vec3 reflect_color = shade(reflect_hit, reflect_ray, depth+1);
         color = add(mul(color, 1.0 - mat.reflect), mul(reflect_color, mat.reflect));
@@ -376,8 +372,8 @@ static void build_scene(void) {
     g_scene.n_spheres = 0;
     g_scene.n_planes = 0;
 
-    // Floor
-    add_plane(v3(0,0,0), v3(0,1,0), mat_matte(v3(0.5,0.5,0.5))); // color overwritten by checker
+    // Floor (color overridden by checker in shade)
+    add_plane(v3(0,0,0), v3(0,1,0), mat_matte(v3(0.5,0.5,0.5)));
 
     // Mirror ball
     add_sphere(v3(0, 1.2, 2), 1.0, mat_mirror(v3(0.9,0.6,0.4), 0.9));
