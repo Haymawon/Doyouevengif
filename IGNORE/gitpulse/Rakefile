@@ -1,0 +1,11 @@
+task default: :run
+
+desc 'Run gitpulse in the current directory'
+task :run do
+  ruby '-Ilib', 'bin/gitpulse'
+end
+
+desc 'Run with default options'
+task :demo do
+  sh 'bin/gitpulse --days 30 --width 40'
+end
