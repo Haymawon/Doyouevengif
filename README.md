@@ -2,7 +2,7 @@
 
 > Midnight uploads, no filters.
 
-Twin Pears is a fun, collaborative blog where we share poems, random thoughts, and late‑night ideas. Built with Vue 3, TypeScript, and Vite.
+Twin Pears is a fun, collaborative blog where we share poems, random thoughts, and late night ideas. Built with Vue 3, TypeScript, and Vite.
 
 
 🌐 **Live Site:** [doyouevengif.online](https://doyouevengif.online)
