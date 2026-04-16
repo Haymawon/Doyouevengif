@@ -11,109 +11,6 @@
     <link rel="shortcut icon" href="/ChatGPT Image Jun 16, 2025, 08_34_49 PM.png" type="image/x-icon" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <link rel="stylesheet" href="/style.css" />
-    <style>
-      /* MAINTENANCE POPUP STYLES */
-      #maintenance-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        backdrop-filter: blur(10px);
-        background: rgba(0,0,0,0.3);
-        z-index: 99999;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-family: 'Nunito', 'Open Sans', sans-serif;
-        pointer-events: all;
-      }
-
-      .maintenance-popup {
-        background: rgba(255, 255, 255, 0.15);
-        border-radius: 25px;
-        padding: 25px;
-        text-align: center;
-        width: 85%;
-        max-width: 500px;
-        border: 2px solid rgba(255,255,255,0.2);
-        box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
-        backdrop-filter: blur(4px);
-        animation: float 3s ease-in-out infinite;
-        position: relative;
-      }
-
-      .maintenance-title {
-        font-family: 'Nuito', sans-serif;
-        font-size: clamp(2rem, 5vw, 3rem);
-        color: rgba(255,255,255,0.95);
-        text-shadow: 0 2px 10px rgba(0,0,0,0.2);
-        margin-bottom: 15px;
-      }
-
-      .maintenance-text {
-        font-family: 'Open Sans', sans-serif;
-        font-size: clamp(1rem, 3vw, 1.2rem);
-        color: rgba(255,255,255,0.9);
-        line-height: 1.6;
-        margin: 15px 0;
-      }
-
-      .maintenance-gif {
-        width: 100%;
-        max-width: 180px;
-        height: auto;
-        margin: 10px auto;
-        border-radius: 20px;
-        filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
-      }
-
-      .sparkles {
-        position: absolute;
-        width: 100%;
-        height: 50px;
-        top: -20px;
-        left: 0;
-        display: flex;
-        justify-content: space-around;
-      }
-
-      .fa-sparkle {
-        color: rgba(255,255,255,0.8);
-        font-size: 1.5rem;
-        filter: drop-shadow(0 0 8px rgba(255,215,0,0.6));
-      }
-
-      @keyframes float {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
-      }
-
-      @media (max-width: 768px) {
-        .maintenance-popup {
-          padding: 20px;
-          width: 90%;
-        }
-        .maintenance-title {
-          font-size: 2.2rem;
-        }
-        .sparkles {
-          top: -15px;
-        }
-      }
-
-      @media (max-width: 480px) {
-        .maintenance-popup {
-          padding: 15px;
-        }
-        .maintenance-title {
-          font-size: 1.8rem;
-        }
-        .maintenance-gif {
-          max-width: 150px;
-        }
-      }
-    </style>
   </head>
   <body>
     <!-- Header with Logo and Hamburger Menu -->
@@ -421,26 +318,7 @@
       <p>Version: Twin Pears v1.18</p>
     </footer>
 
-    <!-- Maintenance Popup -->
-    <div id="maintenance-overlay">
-      <div class="maintenance-popup animate__animated animate__bounceIn">
-        <img src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExMjhweGdnM3VzbGZ4ZjdnNXZjeHJxdnh5eG16NjFkd294dnl5ODcwayZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/yaUG0KDAcIcWA/giphy.gif" class="maintenance-gif">
-        <h1 class="maintenance-title">Whoopsie-daisy!</h1>
-        <p class="maintenance-text">
-          <i class="fas fa-screwdriver-wrench fa-fw animate__animated animate__swing animate__infinite"></i>
-          Our digital hamsters are working overtime!
-        </p>
-        <p class="maintenance-text">
-          <i class="fas fa-heart fa-fw animate__animated animate__pulse animate__infinite"></i>
-          Thanks for being awesome while we fix things!
-        </p>
-        <div class="sparkles">
-          <i class="fas fa-sparkle animate__animated animate__fadeOut" style="--fa-animation-delay: 0.5s;"></i>
-          <i class="fas fa-sparkle animate__animated animate__fadeOut" style="--fa-animation-delay: 1s;"></i>
-          <i class="fas fa-sparkle animate__animated animate__fadeOut" style="--fa-animation-delay: 1.5s;"></i>
-        </div>
-      </div>
-    </div>
+  
 
     <script src="/script.js"></script>
   </body>
