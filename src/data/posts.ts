@@ -134,7 +134,7 @@ export const blogPosts: BlogPost[] = [
   time: "11:47 PM",
   tags: ["diary", "myanmar", "waiting"],
   category: "love",
-  image: "/6daysalone.jpg",
+  image: "/6daysalone.png",
 },
   {
       id: 15,
