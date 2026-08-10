@@ -17,8 +17,8 @@
 
     function ensureShareMeta() {
         const currentUrl = window.location.href;
-        const origin = window.location.origin || 'http://127.0.0.1:5000';
-        const imageUrl = `${origin}/favicon.png`;
+        const origin = window.location.origin || 'https://doyouevengif-alt.netlify.app/';
+        const imageUrl = `${origin}/faviconn.png`;
 
         const ogImage = document.querySelector('meta[property="og:image"]');
         if (ogImage) ogImage.setAttribute('content', imageUrl);
@@ -31,7 +31,6 @@
     }
 
     function buildShareText(title, desc) {
-        const pageUrl = window.location.href;
         let text = `${title}`;
         if (desc) text += `\n\n${desc}`;
         text += `\n\nRead more: ${pageUrl}`;
