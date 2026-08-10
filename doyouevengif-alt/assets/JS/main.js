@@ -233,7 +233,7 @@
                 });
                 const data = await resp.json();
                 if (resp.ok && data.success) {
-                    msgEl.textContent = 'Subscribed! Check your email (if we had one).';
+                    msgEl.textContent = 'Subscribed! Check your email.';
                     msgEl.style.color = '#a0d0b0';
                     newsletterEmail.value = '';
                     // Mark as subscribed so popup won't show again
