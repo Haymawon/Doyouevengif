@@ -7,13 +7,13 @@ from datetime import datetime
 from email.message import EmailMessage
 
 from dotenv import load_dotenv
-from flask import Flask, jsonify, request, send_from_directory
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 
 load_dotenv()
 
-app = Flask(__name__, static_folder='.', static_url_path='')
-CORS(app, origins=['https://doyouevengif-alt.neocities.org/'])
+app = Flask(__name__)
+CORS(app, origins=['https://doyouevengif-alt.neocities.org/'], supports_credentials=True)
 
 SMTP_HOST = os.environ.get('SMTP_HOST', 'smtp.protonmail.ch')
 SMTP_PORT = int(os.environ.get('SMTP_PORT', 587))
@@ -67,7 +67,6 @@ def send_email(recipient, subject, body_plain, body_html=None):
 
 
 def build_welcome_html(email):
-    # 🔥 CHANGE THIS TO YOUR PYTHONANYWHERE URL
     base_url = 'https://haymawonn.pythonanywhere.com'
     unsubscribe_url = f"{base_url}/api/unsubscribe?email={urllib.parse.quote(email)}"
     return f"""<!DOCTYPE html>
@@ -128,7 +127,10 @@ def build_unsubscribe_html(email):
 
 @app.route('/')
 def index():
-    return send_from_directory('.', 'index.html')
+    return jsonify({
+        'status': 'online',
+        'message': 'DoYouEvenGif-alt API is running. Use /api/subscribe, /api/contact, /api/unsubscribe'
+    })
 
 
 @app.route('/api/subscribe', methods=['POST'])
@@ -206,11 +208,6 @@ def contact():
         send_email(CONTACT_RECIPIENT, f'✉️ Contact from {email}', f'From: {email}\n\n{message}', f'<p>From: {email}</p><p>{message}</p>')
 
     return jsonify({'success': True, 'message': 'Message sent!'})
-
-
-@app.route('/assets/<path:path>')
-def serve_assets(path):
-    return send_from_directory('assets', path)
 
 
 if __name__ == '__main__':
