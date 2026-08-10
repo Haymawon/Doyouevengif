@@ -50,7 +50,7 @@ if (shareTelegram) {
         const desc = getMetaDescription();
         const text = buildShareText(title, desc);
 
-        // No URL — share text only
+        
         const tgUrl = `https://t.me/share/url?text=${encodeURIComponent(text)}`;
 
         window.open(tgUrl, '_blank', 'width=600,height=500');
