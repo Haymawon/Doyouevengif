@@ -65,7 +65,7 @@ if (shareThreads) {
         const desc = getMetaDescription();
         const text = buildShareText(title, desc);
 
-        // No URL — share text only
+        
         const threadsUrl = `https://www.threads.net/intent/post?text=${encodeURIComponent(text)}`;
 
         window.open(threadsUrl, '_blank', 'width=600,height=500');
