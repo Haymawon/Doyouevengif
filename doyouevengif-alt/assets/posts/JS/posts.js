@@ -18,7 +18,7 @@ function getPostTitle() {
 function ensureShareMeta() {
     const currentUrl = window.location.href;
     const origin = window.location.origin || 'https://doyouevengif-alt.netlify.app';
-    const imageUrl = `${origin}/favicon.png`;
+    const imageUrl = `${origin}/faviconn.png`;
 
     const ogImage = document.querySelector('meta[property="og:image"]');
     if (ogImage) ogImage.setAttribute('content', imageUrl);
