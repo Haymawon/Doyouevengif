@@ -1,4 +1,3 @@
-```js
 // Individual post page JS – share buttons and back link
 (function () {
     'use strict';
