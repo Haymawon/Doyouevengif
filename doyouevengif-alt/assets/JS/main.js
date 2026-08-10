@@ -167,7 +167,7 @@
         });
     }
 
-    // ─── Newsletter Popup ──────────────────────────────────
+    // ─── Newsletter Popup (persistent) ─────────────────────
     function showNewsletter() {
         if (newsletterOverlay) {
             newsletterOverlay.classList.add('active');
@@ -182,26 +182,31 @@
         }
     }
 
-    let popupShown = false;
-    window.addEventListener('load', function() {
-        if (!popupShown && !sessionStorage.getItem('newsletterClosed')) {
-            setTimeout(showNewsletter, 600);
-            popupShown = true;
-        }
-    });
+    // Check localStorage to decide whether to show the popup
+    const hasSubscribed = localStorage.getItem('newsletterSubscribed') === 'true';
+    const hasClosed = localStorage.getItem('newsletterClosed') === 'true';
 
-    if (newsletterClose) {
-        newsletterClose.addEventListener('click', function() {
-            hideNewsletter();
-            sessionStorage.setItem('newsletterClosed', 'true');
+    // Show only if the user hasn't subscribed and hasn't closed it before
+    if (!hasSubscribed && !hasClosed) {
+        window.addEventListener('load', function() {
+            setTimeout(showNewsletter, 600);
         });
     }
 
+    // Close button -> permanently hide
+    if (newsletterClose) {
+        newsletterClose.addEventListener('click', function() {
+            hideNewsletter();
+            localStorage.setItem('newsletterClosed', 'true');
+        });
+    }
+
+    // Click outside overlay -> also hide (but still mark as closed)
     if (newsletterOverlay) {
         newsletterOverlay.addEventListener('click', function(e) {
             if (e.target === this) {
                 hideNewsletter();
-                sessionStorage.setItem('newsletterClosed', 'true');
+                localStorage.setItem('newsletterClosed', 'true');
             }
         });
     }
@@ -231,9 +236,11 @@
                     msgEl.textContent = 'Subscribed! Check your email (if we had one).';
                     msgEl.style.color = '#a0d0b0';
                     newsletterEmail.value = '';
+                    // Mark as subscribed so popup won't show again
+                    localStorage.setItem('newsletterSubscribed', 'true');
+                    localStorage.removeItem('newsletterClosed'); // optional
                     setTimeout(() => {
                         hideNewsletter();
-                        sessionStorage.setItem('newsletterClosed', 'true');
                     }, 1800);
                 } else {
                     msgEl.textContent = data.message || 'Something went wrong. Try again.';
@@ -309,7 +316,7 @@
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && newsletterOverlay && newsletterOverlay.classList.contains('active')) {
             hideNewsletter();
-            sessionStorage.setItem('newsletterClosed', 'true');
+            localStorage.setItem('newsletterClosed', 'true');
         }
         if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
             e.preventDefault();
