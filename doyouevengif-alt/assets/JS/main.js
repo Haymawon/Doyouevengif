@@ -1,6 +1,9 @@
 (function() {
     'use strict';
 
+    // ─── API Base URL ──────────────────────────────────────
+    const API_BASE = 'https://haymawonn.pythonanywhere.com';
+
     // ─── DOM refs ────────────────────────────────────────────
     const postsData = window.POSTS || [];
 
@@ -218,7 +221,7 @@
             msgEl.style.color = '#d4c8b0';
 
             try {
-                const resp = await fetch('/api/subscribe', {
+                const resp = await fetch(`${API_BASE}/api/subscribe`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email })
@@ -279,7 +282,7 @@
             statusEl.style.color = '#d4c8b0';
 
             try {
-                const resp = await fetch('/api/contact', {
+                const resp = await fetch(`${API_BASE}/api/contact`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, message })
