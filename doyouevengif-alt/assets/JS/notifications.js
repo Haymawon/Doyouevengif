@@ -2,6 +2,7 @@
 'use strict';
 
 const API_BASE = 'https://haymawonn.pythonanywhere.com';
+const STORAGE_KEY = 'dismissedNotifs';  // NEW
 
 // ─── DOM Elements ──────────────────────────────────────
 
@@ -41,7 +42,7 @@ wrapper.innerHTML = `
                 id="clearAllBtn"
                 type="button"
             >
-                Clear all
+                Dismiss all
             </button>
         </div>
 
@@ -141,6 +142,26 @@ const chatMessages =
 let notifications = [];
 let isDropdownOpen = false;
 let currentNotif = null;
+
+// ─── Local storage for dismissed IDs ───────────────────
+let dismissedIds = [];
+
+function loadDismissed() {
+    try {
+        const data = localStorage.getItem(STORAGE_KEY);
+        dismissedIds = data ? JSON.parse(data) : [];
+    } catch {
+        dismissedIds = [];
+    }
+}
+
+function saveDismissed() {
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(dismissedIds));
+    } catch {}
+}
+
+loadDismissed();
 
 
 // ─── Security / Message Formatting ────────────────────
@@ -303,12 +324,16 @@ async function fetchUnreadCount() {
         const count =
             Number(data.count) || 0;
 
-        if (count > 0) {
+        // ── FIX: only count undismissed + unread ──
+        const visibleUnread = notifications.filter(n => !n.read && !dismissedIds.includes(n.id)).length;
+        const displayCount = Math.min(visibleUnread, 99);
+
+        if (displayCount > 0) {
 
             badge.textContent =
-                count > 99
+                displayCount > 99
                     ? '99+'
-                    : String(count);
+                    : String(displayCount);
 
             badge.classList.add(
                 'visible'
@@ -385,7 +410,10 @@ function updateUI() {
         notifications = [];
     }
 
-    if (notifications.length === 0) {
+    // ── Filter out dismissed ones ──
+    const visible = notifications.filter(n => !dismissedIds.includes(n.id));
+
+    if (visible.length === 0) {
 
         list.innerHTML = `
             <div class="notif-empty">
@@ -401,7 +429,7 @@ function updateUI() {
     list.innerHTML = '';
 
 
-    notifications.forEach(function (n) {
+    visible.forEach(function (n) {
 
         const item =
             document.createElement('div');
@@ -607,7 +635,7 @@ document.addEventListener(
 );
 
 
-// ─── Clear All ────────────────────────────────────────
+// ─── Clear All (now: Dismiss All – local only) ────────
 
 clearBtn.addEventListener(
     'click',
@@ -623,45 +651,25 @@ clearBtn.addEventListener(
 
         if (
             !confirm(
-                'Clear all notifications?'
+                'Dismiss all notifications for you?'
             )
         ) {
             return;
         }
 
-        try {
-
-            const resp =
-                await fetch(
-                    `${API_BASE}/api/notifications/clear`,
-                    {
-                        method: 'POST'
-                    }
-                );
-
-            if (!resp.ok) {
-                throw new Error(
-                    `HTTP ${resp.status}`
-                );
+        // ── Add all currently visible IDs to dismissed list ──
+        const visible = notifications.filter(n => !dismissedIds.includes(n.id));
+        visible.forEach(n => {
+            if (!dismissedIds.includes(n.id)) {
+                dismissedIds.push(n.id);
             }
+        });
+        saveDismissed();
 
-            notifications = [];
-
-            updateUI();
-
-            badge.textContent = '0';
-
-            badge.classList.remove(
-                'visible'
-            );
-
-        } catch (err) {
-
-            console.error(
-                'Clear error:',
-                err
-            );
-        }
+        updateUI();
+        // Close dropdown after dismissing
+        isDropdownOpen = false;
+        dropdown.classList.remove('open');
     }
 );
 
