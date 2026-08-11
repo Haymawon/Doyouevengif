@@ -1,7 +1,7 @@
 (function () {
 'use strict';
 
-const API_BASE = window.location.origin;
+const API_BASE = 'https://haymawonn.pythonanywhere.com';
 
 // ─── DOM Elements ──────────────────────────────────────
 
