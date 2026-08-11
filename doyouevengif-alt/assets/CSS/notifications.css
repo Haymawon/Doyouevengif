@@ -1,0 +1,1369 @@
+/* =========================================================
+   NOTIFICATION SYSTEM
+   DOYOUEVENGIF-ALT
+   LIQUID GLASS
+   ========================================================= */
+
+
+/* =========================================================
+   NOTIFICATION WRAPPER
+   ========================================================= */
+
+.notification-wrapper {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+
+    z-index: 1000;
+}
+
+
+/* =========================================================
+   NOTIFICATION BELL
+   ========================================================= */
+
+.notification-bell {
+    position: relative;
+
+    width: 56px;
+    height: 56px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    cursor: pointer;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.14),
+            rgba(255, 255, 255, 0.045)
+        );
+
+    backdrop-filter:
+        blur(24px)
+        saturate(1.5);
+
+    -webkit-backdrop-filter:
+        blur(24px)
+        saturate(1.5);
+
+    border:
+        1px solid rgba(255, 255, 255, 0.16);
+
+    box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.18),
+        inset 0 -1px 1px rgba(0, 0, 0, 0.12),
+        0 8px 32px rgba(0, 0, 0, 0.35);
+
+    overflow: visible;
+
+    transition:
+        transform 0.25s ease,
+        background 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+
+/* Glass highlight */
+
+.notification-bell::before {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    border-radius: inherit;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.14),
+            transparent 45%,
+            rgba(255, 255, 255, 0.025)
+        );
+
+    pointer-events: none;
+}
+
+
+/* Bell hover */
+
+.notification-bell:hover {
+    transform: scale(1.08);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.19),
+            rgba(255, 255, 255, 0.06)
+        );
+
+    border-color:
+        rgba(255, 255, 255, 0.24);
+
+    box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.22),
+        0 12px 40px rgba(0, 0, 0, 0.45);
+}
+
+
+/* Bell icon */
+
+.notification-bell svg {
+    position: relative;
+    z-index: 1;
+
+    width: 26px;
+    height: 26px;
+
+    color: #eae6df;
+
+    transition:
+        transform 0.25s ease,
+        color 0.25s ease;
+}
+
+.notification-bell:hover svg {
+    color: #ffffff;
+
+    transform: scale(1.04);
+}
+
+
+/* =========================================================
+   NOTIFICATION BADGE
+   THE NUMBER ON THE BELL
+   ========================================================= */
+
+.notification-badge {
+    position: absolute;
+
+    top: -5px;
+    right: -5px;
+
+    min-width: 21px;
+    height: 21px;
+
+    padding: 0 5px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 999px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(240, 160, 144, 0.9),
+            rgba(220, 120, 110, 0.65)
+        );
+
+    backdrop-filter:
+        blur(14px)
+        saturate(1.5);
+
+    -webkit-backdrop-filter:
+        blur(14px)
+        saturate(1.5);
+
+    border:
+        1px solid rgba(255, 255, 255, 0.28);
+
+    box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.3),
+        0 4px 14px rgba(0, 0, 0, 0.3);
+
+    color: #0b0a0c;
+
+    font-family:
+        'EmiratesEssentials-Bold',
+        system-ui,
+        sans-serif;
+
+    font-size: 0.68rem;
+    font-weight: 700;
+
+    line-height: 1;
+
+    opacity: 0;
+
+    transform: scale(0.5);
+
+    pointer-events: none;
+
+    transition:
+        opacity 0.2s ease,
+        transform 0.25s ease;
+}
+
+
+/* Show badge */
+
+.notification-badge.visible {
+    opacity: 1;
+
+    transform: scale(1);
+}
+
+
+/* =========================================================
+   NOTIFICATION DROPDOWN
+   ========================================================= */
+
+.notification-dropdown {
+    position: absolute;
+
+    right: 0;
+    bottom: calc(100% + 14px);
+
+    width: 380px;
+    max-height: 420px;
+
+    display: none;
+
+    overflow: hidden;
+
+    border-radius: 24px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.11),
+            rgba(255, 255, 255, 0.035)
+        );
+
+    backdrop-filter:
+        blur(32px)
+        saturate(1.6);
+
+    -webkit-backdrop-filter:
+        blur(32px)
+        saturate(1.6);
+
+    border:
+        1px solid rgba(255, 255, 255, 0.15);
+
+    box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.16),
+        inset 0 -1px 1px rgba(0, 0, 0, 0.12),
+        0 24px 70px rgba(0, 0, 0, 0.58);
+
+    opacity: 0;
+
+    transform:
+        translateY(10px)
+        scale(0.95);
+
+    transform-origin:
+        bottom right;
+
+    transition:
+        opacity 0.25s ease,
+        transform 0.25s ease;
+}
+
+
+/* Open */
+
+.notification-dropdown.open {
+    display: block;
+
+    opacity: 1;
+
+    transform:
+        translateY(0)
+        scale(1);
+}
+
+
+/* =========================================================
+   DROPDOWN HEADER
+   ========================================================= */
+
+.notif-dropdown-header {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0.85rem 1.1rem;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.08),
+            rgba(255, 255, 255, 0.025)
+        );
+
+    backdrop-filter:
+        blur(24px)
+        saturate(1.4);
+
+    -webkit-backdrop-filter:
+        blur(24px)
+        saturate(1.4);
+
+    border-bottom:
+        1px solid rgba(255, 255, 255, 0.09);
+
+    box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.08);
+
+    color: #d8d1c9;
+
+    font-family:
+        'EmiratesEssentials-Bold',
+        system-ui,
+        sans-serif;
+
+    font-size: 0.85rem;
+
+    letter-spacing: 0.04em;
+}
+
+
+/* =========================================================
+   CLEAR BUTTON
+   ========================================================= */
+
+.notif-dropdown-header .clear-btn {
+    padding:
+        0.4rem
+        0.65rem;
+
+    border-radius: 10px;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.08);
+
+    background:
+        rgba(255, 255, 255, 0.045);
+
+    backdrop-filter:
+        blur(12px);
+
+    -webkit-backdrop-filter:
+        blur(12px);
+
+    color: #918a83;
+
+    font-family: inherit;
+
+    font-size: 0.72rem;
+
+    cursor: pointer;
+
+    transition:
+        color 0.2s ease,
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.notif-dropdown-header .clear-btn:hover {
+    color: #f0ebe3;
+
+    background:
+        rgba(255, 255, 255, 0.09);
+
+    border-color:
+        rgba(255, 255, 255, 0.16);
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   NOTIFICATION LIST
+   ========================================================= */
+
+.notif-list {
+    max-height: 340px;
+
+    overflow-y: auto;
+
+    padding: 0.35rem;
+}
+
+
+/* =========================================================
+   NOTIFICATION ITEM
+   ========================================================= */
+
+.notif-item {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+
+    gap: 0.8rem;
+
+    margin:
+        0.25rem
+        0;
+
+    padding:
+        0.75rem
+        0.85rem;
+
+    border-radius: 18px;
+
+    cursor: pointer;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.075),
+            rgba(255, 255, 255, 0.025)
+        );
+
+    backdrop-filter:
+        blur(18px)
+        saturate(1.35);
+
+    -webkit-backdrop-filter:
+        blur(18px)
+        saturate(1.35);
+
+    border:
+        1px solid rgba(255, 255, 255, 0.07);
+
+    box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.07);
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+/* Hover */
+
+.notif-item:hover {
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.12),
+            rgba(255, 255, 255, 0.045)
+        );
+
+    border-color:
+        rgba(255, 255, 255, 0.14);
+
+    box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.12),
+        0 6px 20px rgba(0, 0, 0, 0.15);
+
+    transform:
+        translateY(-1px);
+}
+
+
+/* =========================================================
+   AVATAR
+   ========================================================= */
+
+.notif-item .notif-avatar {
+    width: 44px;
+    height: 44px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    object-fit: cover;
+
+    /*
+     * IMPORTANT:
+     * No blur or backdrop-filter on the avatar.
+     * Profile picture stays sharp.
+     */
+
+    border:
+        1px solid rgba(255, 255, 255, 0.13);
+
+    box-shadow:
+        0 3px 12px rgba(0, 0, 0, 0.28);
+}
+
+
+/* =========================================================
+   NOTIFICATION CONTENT
+   ========================================================= */
+
+.notif-item .notif-content {
+    flex: 1;
+
+    min-width: 0;
+
+    overflow: hidden;
+}
+
+
+/* Name */
+
+.notif-item .notif-name {
+    margin-bottom: 2px;
+
+    color: #f0ebe3;
+
+    font-family:
+        'EmiratesEssentials-Bold',
+        system-ui,
+        sans-serif;
+
+    font-size: 0.9rem;
+
+    font-weight: 700;
+
+    line-height: 1.25;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+/* Preview */
+
+.notif-item .notif-preview {
+    color: #b0a89e;
+
+    font-family:
+        'EmiratesEssentials-Bold',
+        system-ui,
+        sans-serif;
+
+    font-size: 0.82rem;
+
+    line-height: 1.4;
+
+    white-space: pre-line;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    /*
+     * Keeps the notification compact.
+     */
+
+    display: -webkit-box;
+
+    -webkit-line-clamp: 2;
+
+    -webkit-box-orient: vertical;
+}
+
+
+/* =========================================================
+   NOTIFICATION RIGHT SIDE
+   ========================================================= */
+
+.notif-right {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: flex-end;
+
+    justify-content: center;
+
+    gap: 5px;
+
+    flex-shrink: 0;
+}
+
+
+/* =========================================================
+   TIME
+   ========================================================= */
+
+.notif-item .notif-time {
+    flex-shrink: 0;
+
+    padding:
+        0.25rem
+        0.4rem;
+
+    border-radius: 8px;
+
+    color: #8d857d;
+
+    font-family:
+        system-ui,
+        sans-serif;
+
+    font-size: 0.68rem;
+
+    line-height: 1;
+
+    background:
+        rgba(255, 255, 255, 0.035);
+
+    backdrop-filter:
+        blur(8px);
+
+    -webkit-backdrop-filter:
+        blur(8px);
+
+    border:
+        1px solid rgba(255, 255, 255, 0.05);
+}
+
+
+/* =========================================================
+   MESSAGE COUNT
+   ========================================================= */
+
+.notif-unread-count {
+    min-width: 22px;
+    height: 22px;
+
+    padding:
+        0
+        6px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 999px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.18),
+            rgba(255, 255, 255, 0.055)
+        );
+
+    backdrop-filter:
+        blur(14px)
+        saturate(1.5);
+
+    -webkit-backdrop-filter:
+        blur(14px)
+        saturate(1.5);
+
+    border:
+        1px solid rgba(255, 255, 255, 0.18);
+
+    box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.18),
+        0 4px 14px rgba(0, 0, 0, 0.25);
+
+    color: #f0ebe3;
+
+    font-family:
+        'EmiratesEssentials-Bold',
+        system-ui,
+        sans-serif;
+
+    font-size: 0.7rem;
+
+    font-weight: 700;
+
+    line-height: 1;
+}
+
+
+/* =========================================================
+   EMPTY NOTIFICATIONS
+   ========================================================= */
+
+.notif-empty {
+    margin: 0.25rem;
+
+    padding:
+        2rem
+        1.2rem;
+
+    border-radius: 18px;
+
+    text-align: center;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.06),
+            rgba(255, 255, 255, 0.02)
+        );
+
+    backdrop-filter:
+        blur(18px);
+
+    -webkit-backdrop-filter:
+        blur(18px);
+
+    border:
+        1px solid rgba(255, 255, 255, 0.07);
+
+    color: #8a8280;
+
+    font-family:
+        'EmiratesEssentials-Bold',
+        system-ui,
+        sans-serif;
+
+    font-size: 0.95rem;
+}
+
+
+/* =========================================================
+   CLICKABLE LINKS
+   ========================================================= */
+
+.notification-link {
+    color: #b8ddff;
+
+    text-decoration: none;
+
+    border-bottom:
+        1px solid
+        rgba(184, 221, 255, 0.35);
+
+    transition:
+        color 0.2s ease,
+        border-color 0.2s ease,
+        text-shadow 0.2s ease;
+}
+
+.notification-link:hover {
+    color: #ffffff;
+
+    border-bottom-color:
+        rgba(255, 255, 255, 0.8);
+
+    text-shadow:
+        0 0 12px
+        rgba(184, 221, 255, 0.3);
+}
+
+
+/* =========================================================
+   CHAT OVERLAY
+   ========================================================= */
+
+.chat-overlay {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 2000;
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 1.5rem;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(10, 9, 12, 0.58),
+            rgba(10, 9, 12, 0.38)
+        );
+
+    backdrop-filter:
+        blur(18px)
+        saturate(1.3);
+
+    -webkit-backdrop-filter:
+        blur(18px)
+        saturate(1.3);
+}
+
+
+/* Open */
+
+.chat-overlay.open {
+    display: flex;
+}
+
+
+/* =========================================================
+   CHAT MODAL
+   ========================================================= */
+
+.chat-modal {
+    width: 100%;
+
+    max-width: 480px;
+
+    max-height: 90vh;
+
+    display: flex;
+
+    flex-direction: column;
+
+    overflow: hidden;
+
+    border-radius: 28px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.105),
+            rgba(255, 255, 255, 0.035)
+        );
+
+    backdrop-filter:
+        blur(36px)
+        saturate(1.65);
+
+    -webkit-backdrop-filter:
+        blur(36px)
+        saturate(1.65);
+
+    border:
+        1px solid rgba(255, 255, 255, 0.15);
+
+    box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.18),
+        inset 0 -1px 1px rgba(0, 0, 0, 0.12),
+        0 40px 100px rgba(0, 0, 0, 0.65);
+}
+
+
+/* =========================================================
+   CHAT HEADER
+   ========================================================= */
+
+.chat-header {
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 0.8rem;
+
+    padding:
+        0.8rem
+        1.2rem;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.09),
+            rgba(255, 255, 255, 0.025)
+        );
+
+    backdrop-filter:
+        blur(24px)
+        saturate(1.5);
+
+    -webkit-backdrop-filter:
+        blur(24px)
+        saturate(1.5);
+
+    border-bottom:
+        1px solid
+        rgba(255, 255, 255, 0.09);
+
+    box-shadow:
+        inset 0 1px 1px
+        rgba(255, 255, 255, 0.08);
+}
+
+
+/* =========================================================
+   CHAT BACK BUTTON
+   ========================================================= */
+
+.chat-header .back-btn {
+    width: 36px;
+    height: 36px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border-radius: 12px;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.08);
+
+    background:
+        rgba(255, 255, 255, 0.055);
+
+    backdrop-filter:
+        blur(12px);
+
+    -webkit-backdrop-filter:
+        blur(12px);
+
+    color: #b0a89e;
+
+    font-size: 1.35rem;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+        color 0.2s ease,
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.chat-header .back-btn:hover {
+    color: #ffffff;
+
+    background:
+        rgba(255, 255, 255, 0.1);
+
+    border-color:
+        rgba(255, 255, 255, 0.16);
+
+    transform:
+        translateX(-2px);
+}
+
+
+/* =========================================================
+   CHAT AVATAR
+   ========================================================= */
+
+.chat-header .chat-avatar {
+    width: 40px;
+    height: 40px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    object-fit: cover;
+
+    /*
+     * Profile picture stays sharp.
+     */
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.13);
+
+    box-shadow:
+        0 3px 12px
+        rgba(0, 0, 0, 0.28);
+}
+
+
+/* =========================================================
+   CHAT NAME
+   ========================================================= */
+
+.chat-header .chat-name {
+    flex: 1;
+
+    min-width: 0;
+
+    color: #f0ebe3;
+
+    font-family:
+        'EmiratesEssentials-Bold',
+        system-ui,
+        sans-serif;
+
+    font-size: 1.1rem;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   CHAT MESSAGES AREA
+   ========================================================= */
+
+.chat-messages {
+    flex: 1;
+
+    min-height: 0;
+
+    padding:
+        1rem
+        1.2rem;
+
+    overflow-y: auto;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 0.7rem;
+
+    background:
+        rgba(255, 255, 255, 0.012);
+}
+
+
+/* =========================================================
+   CHAT MESSAGE
+   ========================================================= */
+
+.chat-message {
+    position: relative;
+
+    max-width: 80%;
+
+    align-self: flex-start;
+
+    padding:
+        0.75rem
+        1rem;
+
+    border-radius: 18px;
+
+    color: #eae6df;
+
+    font-family:
+        'EmiratesEssentials-Bold',
+        system-ui,
+        sans-serif;
+
+    font-size: 0.95rem;
+
+    line-height: 1.5;
+
+    white-space: pre-line;
+
+    word-break: break-word;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.095),
+            rgba(255, 255, 255, 0.035)
+        );
+
+    backdrop-filter:
+        blur(18px)
+        saturate(1.35);
+
+    -webkit-backdrop-filter:
+        blur(18px)
+        saturate(1.35);
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.1);
+
+    box-shadow:
+        inset 0 1px 1px
+        rgba(255, 255, 255, 0.1),
+
+        0 4px 16px
+        rgba(0, 0, 0, 0.12);
+}
+
+
+/* =========================================================
+   CHAT MESSAGE TIME
+   ========================================================= */
+
+.chat-message .msg-time {
+    display: block;
+
+    margin-top: 0.45rem;
+
+    color: #8a827a;
+
+    font-family:
+        system-ui,
+        sans-serif;
+
+    font-size: 0.65rem;
+
+    line-height: 1;
+
+    opacity: 0.8;
+}
+
+
+/* =========================================================
+   CHAT LINKS
+   ========================================================= */
+
+.chat-message .notification-link {
+    color: #b8ddff;
+
+    text-decoration: none;
+
+    border-bottom:
+        1px solid
+        rgba(184, 221, 255, 0.35);
+}
+
+.chat-message .notification-link:hover {
+    color: #ffffff;
+
+    border-bottom-color:
+        rgba(255, 255, 255, 0.8);
+}
+
+
+/* =========================================================
+   SCROLLBARS
+   ========================================================= */
+
+.notif-list::-webkit-scrollbar,
+.chat-messages::-webkit-scrollbar {
+    width: 5px;
+}
+
+
+.notif-list::-webkit-scrollbar-track,
+.chat-messages::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+
+.notif-list::-webkit-scrollbar-thumb,
+.chat-messages::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+
+    background:
+        rgba(255, 255, 255, 0.1);
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.04);
+}
+
+
+.notif-list::-webkit-scrollbar-thumb:hover,
+.chat-messages::-webkit-scrollbar-thumb:hover {
+    background:
+        rgba(255, 255, 255, 0.18);
+}
+
+
+/* Firefox */
+
+.notif-list,
+.chat-messages {
+    scrollbar-width: thin;
+
+    scrollbar-color:
+        rgba(255, 255, 255, 0.12)
+        transparent;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .notification-wrapper {
+        bottom: 1.2rem;
+        right: 1.2rem;
+    }
+
+
+    /* Bell */
+
+    .notification-bell {
+        width: 48px;
+        height: 48px;
+    }
+
+
+    .notification-bell svg {
+        width: 22px;
+        height: 22px;
+    }
+
+
+    /* Badge */
+
+    .notification-badge {
+        top: -4px;
+        right: -4px;
+
+        min-width: 19px;
+        height: 19px;
+
+        font-size: 0.62rem;
+    }
+
+
+    /* Dropdown */
+
+    .notification-dropdown {
+        width:
+            calc(100vw - 2.4rem);
+
+        right: -0.4rem;
+
+        max-height: 360px;
+
+        border-radius: 20px;
+    }
+
+
+    .notif-list {
+        max-height: 290px;
+    }
+
+
+    /* Notification */
+
+    .notif-item {
+        gap: 0.65rem;
+
+        padding:
+            0.7rem
+            0.7rem;
+
+        border-radius: 16px;
+    }
+
+
+    .notif-item .notif-avatar {
+        width: 42px;
+        height: 42px;
+    }
+
+
+    .notif-item .notif-name {
+        font-size: 0.85rem;
+    }
+
+
+    .notif-item .notif-preview {
+        font-size: 0.76rem;
+    }
+
+
+    .notif-item .notif-time {
+        font-size: 0.62rem;
+    }
+
+
+    .notif-unread-count {
+        min-width: 20px;
+        height: 20px;
+
+        padding:
+            0
+            5px;
+
+        font-size: 0.65rem;
+    }
+
+
+    /* Chat */
+
+    .chat-overlay {
+        padding: 0;
+    }
+
+
+    .chat-modal {
+        width: 100%;
+        height: 100%;
+        max-width: 100%;
+        max-height: 100vh;
+
+        border-radius: 0;
+    }
+
+
+    .chat-header {
+        padding:
+            0.75rem
+            1rem;
+    }
+
+
+    .chat-messages {
+        padding:
+            0.9rem
+            1rem;
+    }
+
+
+    .chat-message {
+        max-width: 88%;
+
+        font-size: 0.9rem;
+    }
+}
+
+
+/* =========================================================
+   VERY SMALL SCREENS
+   ========================================================= */
+
+@media (max-width: 380px) {
+
+    .notification-wrapper {
+        bottom: 1rem;
+        right: 1rem;
+    }
+
+
+    .notification-dropdown {
+        width:
+            calc(100vw - 2rem);
+
+        right: -0.3rem;
+    }
+
+
+    .notif-item .notif-avatar {
+        width: 38px;
+        height: 38px;
+    }
+
+
+    .notif-item .notif-preview {
+        -webkit-line-clamp: 1;
+    }
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .notification-bell,
+    .notification-bell svg,
+    .notification-dropdown,
+    .notif-item,
+    .clear-btn,
+    .back-btn,
+    .notification-link {
+        transition: none !important;
+    }
+}
