@@ -496,4 +496,4 @@ There's no frontend build system sitting in the middle, and the backend is just 
 
 The source for this version lives here:
 
-[Haymawon/Doyouevengif-Twin_Pears — dueg-alt / doyouevengif-alt](https://github.com/Haymawon/Doyouevengif-Twin_Pears/tree/dueg-alt/doyouevengif-alt?utm_source=chatgpt.com)
+[Haymawon/Doyouevengif-Twin_Pears — dueg-alt / doyouevengif-alt]((https://github.com/Haymawon/Doyouevengif-Twin_Pears/tree/dueg-alt/doyouevengif-alt?utm_source=Lain))
