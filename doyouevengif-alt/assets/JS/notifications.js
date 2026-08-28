@@ -2,7 +2,8 @@
 'use strict';
 
 const API_BASE = 'https://haymawonn.pythonanywhere.com';
-const STORAGE_KEY = 'dismissedNotifs';  // NEW
+const STORAGE_KEY_DISMISSED = 'dismissedNotifs';
+const STORAGE_KEY_SEEN = 'seenNotifs';   // NEW: per-user seen IDs
 
 // ─── DOM Elements ──────────────────────────────────────
 
@@ -143,25 +144,40 @@ let notifications = [];
 let isDropdownOpen = false;
 let currentNotif = null;
 
-// ─── Local storage for dismissed IDs ───────────────────
-let dismissedIds = [];
+// ─── Local storage for dismissed and seen IDs ───────────
 
-function loadDismissed() {
+let dismissedIds = [];
+let seenIds = [];
+
+function loadFromStorage(key) {
     try {
-        const data = localStorage.getItem(STORAGE_KEY);
-        dismissedIds = data ? JSON.parse(data) : [];
+        const data = localStorage.getItem(key);
+        return data ? JSON.parse(data) : [];
     } catch {
-        dismissedIds = [];
+        return [];
     }
 }
 
-function saveDismissed() {
+function saveToStorage(key, data) {
     try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(dismissedIds));
+        localStorage.setItem(key, JSON.stringify(data));
     } catch {}
 }
 
-loadDismissed();
+function loadAll() {
+    dismissedIds = loadFromStorage(STORAGE_KEY_DISMISSED);
+    seenIds = loadFromStorage(STORAGE_KEY_SEEN);
+}
+
+function saveDismissed() {
+    saveToStorage(STORAGE_KEY_DISMISSED, dismissedIds);
+}
+
+function saveSeen() {
+    saveToStorage(STORAGE_KEY_SEEN, seenIds);
+}
+
+loadAll();
 
 
 // ─── Security / Message Formatting ────────────────────
@@ -298,61 +314,35 @@ async function fetchNotifications() {
 }
 
 
-// ─── Fetch Unread Count ───────────────────────────────
+// ─── Fetch Unread Count (local only) ──────────────────
 
-async function fetchUnreadCount() {
+function fetchUnreadCount() {
 
-    try {
+    // Count notifications that are not dismissed and not seen
+    const visibleUnread = notifications.filter(n =>
+        !dismissedIds.includes(n.id) &&
+        !seenIds.includes(n.id)
+    ).length;
 
-        const resp =
-            await fetch(
-                `${API_BASE}/api/notifications/unread`,
-                {
-                    cache: 'no-store'
-                }
-            );
+    const displayCount = Math.min(visibleUnread, 99);
 
-        if (!resp.ok) {
-            throw new Error(
-                `HTTP ${resp.status}`
-            );
-        }
+    if (displayCount > 0) {
 
-        const data =
-            await resp.json();
+        badge.textContent =
+            displayCount > 99
+                ? '99+'
+                : String(displayCount);
 
-        const count =
-            Number(data.count) || 0;
+        badge.classList.add(
+            'visible'
+        );
 
-        // ── FIX: only count undismissed + unread ──
-        const visibleUnread = notifications.filter(n => !n.read && !dismissedIds.includes(n.id)).length;
-        const displayCount = Math.min(visibleUnread, 99);
+    } else {
 
-        if (displayCount > 0) {
+        badge.textContent = '0';
 
-            badge.textContent =
-                displayCount > 99
-                    ? '99+'
-                    : String(displayCount);
-
-            badge.classList.add(
-                'visible'
-            );
-
-        } else {
-
-            badge.textContent = '0';
-
-            badge.classList.remove(
-                'visible'
-            );
-        }
-
-    } catch (err) {
-
-        console.error(
-            'Error fetching unread count:',
-            err
+        badge.classList.remove(
+            'visible'
         );
     }
 }
@@ -421,6 +411,7 @@ function updateUI() {
             </div>
         `;
 
+        fetchUnreadCount();
         return;
     }
 
@@ -431,11 +422,13 @@ function updateUI() {
 
     visible.forEach(function (n) {
 
+        const isUnread = !seenIds.includes(n.id);
+
         const item =
             document.createElement('div');
 
         item.className =
-            `notif-item ${n.read ? '' : 'unread'}`;
+            `notif-item ${isUnread ? 'unread' : ''}`;
 
         item.dataset.id =
             String(n.id);
@@ -519,18 +512,8 @@ function updateUI() {
         right.appendChild(time);
 
 
-        /*
-         * =================================================
-         * FIX:
-         *
-         * ONLY show the number when notification
-         * is unread.
-         *
-         * Read notification = NO NUMBER.
-         * =================================================
-         */
-
-        if (!n.read) {
+        // Only show unread count if the user hasn't seen it
+        if (isUnread) {
 
             const count =
                 document.createElement('span');
@@ -635,11 +618,11 @@ document.addEventListener(
 );
 
 
-// ─── Clear All (now: Dismiss All – local only) ────────
+// ─── Dismiss All (local only) ────────────────────────
 
 clearBtn.addEventListener(
     'click',
-    async function (e) {
+    function (e) {
 
         e.stopPropagation();
 
@@ -680,73 +663,13 @@ async function openChat(notif) {
 
     currentNotif = notif;
 
-
-    /*
-     * =================================================
-     * MARK AS READ IMMEDIATELY
-     * =================================================
-     *
-     * We update the local notification FIRST.
-     *
-     * This makes the "1" disappear immediately,
-     * instead of waiting for the server.
-     * =================================================
-     */
-
-    if (!notif.read) {
-
-        // Immediately mark local state as read
-        notif.read = true;
-
-        // Immediately remove:
-        // - notification number
-        // - unread styling
-        // - unread bell count
+    // ─── Mark as seen (local only) ──────────────────────
+    if (!seenIds.includes(notif.id)) {
+        seenIds.push(notif.id);
+        saveSeen();
+        // Update UI immediately to remove unread styling and badge
         updateUI();
-
-        /*
-         * Update the server in the background.
-         */
-        try {
-
-            const resp =
-                await fetch(
-                    `${API_BASE}/api/notifications/mark-read`,
-                    {
-                        method: 'POST',
-
-                        headers: {
-                            'Content-Type':
-                                'application/json'
-                        },
-
-                        body: JSON.stringify({
-                            id: notif.id
-                        })
-                    }
-                );
-
-            if (!resp.ok) {
-                throw new Error(
-                    `HTTP ${resp.status}`
-                );
-            }
-
-            /*
-             * Refresh unread count after
-             * server confirms.
-             */
-            fetchUnreadCount();
-
-        } catch (err) {
-
-            console.error(
-                'Mark read error:',
-                err
-            );
-        }
     }
-
 
     // ─── Chat Header ─────────────────────────────
 
@@ -876,7 +799,7 @@ setInterval(
 
 
 console.log(
-    'Notification bell loaded.'
+    'Notification bell loaded (per-user read state).'
 );
 
 })();
